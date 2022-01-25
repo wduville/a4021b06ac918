@@ -1,8 +1,7 @@
-import requests
 import json
 import pathlib
 
-from src.tools import Timer
+from src.tools import Timer, run_query
 
 
 def fetch_all_datasets():
@@ -36,13 +35,6 @@ def fetch_all_datasets():
                 json.dump(obj=result, fp=f, indent=2)
 
         print(len(datasets))
-
-
-def run_query(params: dict = None, headers: dict = None, base_url: str = "https://www.data.gouv.fr/api/1/datasets/"):
-    request = requests.get(url=base_url, params=params, headers=headers)
-    if request.status_code == 200:
-        return request.json()
-    raise Exception(f"Query failed to run by returning code of {request.status_code}: {request.reason}. {params}")
 
 
 if __name__ == '__main__':

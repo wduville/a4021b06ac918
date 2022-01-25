@@ -1,12 +1,10 @@
 import pathlib
 import json
-import os
 
 import slugify
 
 
 def merge_and_filter_datasets():
-    print("OSNAME", os.name)
     datasets = []
     for file in pathlib.Path('data').glob('datasets_page_*_size_*.json'):
         print(file)
@@ -36,7 +34,7 @@ def filter_term(term: str, datasets: list) -> list:
         if term in dataset["title"].lower()
         or term in dataset["description"].lower()
         or slug in dataset["slug"]
-        or slug in slugify.slugify(dataset["description"].lower())
+        or slug in slugify.slugify(dataset["description"])
         or slug in dataset["tags"]
         # or unidecode.unidecode(term) in unidecode.unidecode(dataset["description"])
         # or "resources" in dataset and any(term in resource["description"] or term in resource["title"] for resource in dataset["resources"])

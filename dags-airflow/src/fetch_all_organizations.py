@@ -4,14 +4,25 @@ import json
 import csv
 
 import pymongo
-
+import pymongo.errors
 import minio
+import urllib3
 
-from src.fetch_all_datasets import run_query
+from src.tools import run_query
 
 
-def push_to_mongo(data):
-    client = pymongo.MongoClient('localhost', 27017, connect=False)
+def push_to_mongo(data, ):
+    try:
+        client = pymongo.MongoClient(host="localhost", port=27017, connect=False)
+        # Triggering db connection
+        client.list_database_names()
+    except pymongo.errors.ServerSelectionTimeoutError as e:
+        #
+        # Fallback to wsl2 docker hostnames if connection to 'localhost' fails
+        #
+        print("Switching to mongodb:27017", e)
+        client = pymongo.MongoClient(host="mongodb", port=27017, connect=False)
+
     database_name = 'datagouv'
     collection_name = 'tops'
 
@@ -23,9 +34,18 @@ def push_to_mongo(data):
 def get_datasets_filtered():
     folder = datetime.datetime.now().strftime("%Y-%m-%d")
     file = f'{folder}/datasets_filtered.csv'
-
-    client = minio.Minio("localhost:9000", "minioadmin", "miniopassword", secure=False)
     bucket_name = "datagouv"
+
+    try:
+        client = minio.Minio("localhost:9000", "minioadmin", "miniopassword", secure=False)
+        client.bucket_exists(bucket_name)
+    except urllib3.exceptions.MaxRetryError as e:
+        #
+        # Fallback to wsl2 docker hostnames if connection to 'localhost' fails
+        #
+        print("Switching to minio:9000", e)
+        client = minio.Minio("minio:9000", "minioadmin", "miniopassword", secure=False)
+
     try:
         response = client.get_object(bucket_name, file)
         stream = response.read()
@@ -38,7 +58,6 @@ def get_datasets_filtered():
                     row[json_field] = json.loads(row[json_field])
             data.append(row)
         return data
-
     finally:
         response.close()
         response.release_conn()

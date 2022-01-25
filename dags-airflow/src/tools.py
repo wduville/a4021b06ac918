@@ -1,6 +1,14 @@
 __author__ = 'wduville'
 
 import time
+import requests
+
+
+def run_query(params: dict = None, headers: dict = None, base_url: str = "https://www.data.gouv.fr/api/1/datasets/"):
+    request = requests.get(url=base_url, params=params, headers=headers)
+    if request.status_code == 200:
+        return request.json()
+    raise Exception(f"Query failed to run by returning code of {request.status_code}: {request.reason}. {params}")
 
 
 class Timer:

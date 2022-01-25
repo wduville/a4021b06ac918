@@ -16,8 +16,13 @@ def export_to_csv():
         if not client.bucket_exists(bucket_name):
             client.make_bucket(bucket_name)
     except urllib3.exceptions.MaxRetryError as e:
-        print("Minio Connection failed", e)
-        return
+        #
+        # Fallback to wsl2 docker hostnames if connection to 'localhost' fails
+        #
+        print("Switching to minio:9000", e)
+        client = minio.Minio("minio:9000", "minioadmin", "miniopassword", secure=False)
+        if not client.bucket_exists(bucket_name):
+            client.make_bucket(bucket_name)
 
     file = pathlib.Path('data/datasets_filtered.json')
     with pathlib.Path('data/datasets_filtered.json').open() as f:
