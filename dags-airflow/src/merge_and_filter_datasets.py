@@ -22,8 +22,9 @@ def merge_and_filter_datasets():
         datasets_filtered.extend(data)
         print(search_term, len(data))
 
+    datasets_filtered_dict = {d['id']: d for d in datasets_filtered}
     with open(f'data/datasets_filtered.json', 'w') as f:
-        json.dump(data, fp=f, indent=2)
+        json.dump(list(datasets_filtered_dict.values()), fp=f, indent=2)
 
 
 def filter_term(term: str, datasets: list) -> list:
