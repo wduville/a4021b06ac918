@@ -19,8 +19,8 @@ def export_to_csv():
         print("Minio Connection failed", e)
         return
 
-    file = pathlib.Path(f'data/datasets_filtered.json')
-    with pathlib.Path(f'data/datasets_filtered.json').open() as f:
+    file = pathlib.Path('data/datasets_filtered.json')
+    with pathlib.Path('data/datasets_filtered.json').open() as f:
         datasets = json.load(f)
     print(len(datasets))
 

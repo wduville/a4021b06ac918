@@ -2,7 +2,6 @@ import datetime
 import io
 import json
 import csv
-import pathlib
 
 import pymongo
 
@@ -43,20 +42,6 @@ def get_datasets_filtered():
     finally:
         response.close()
         response.release_conn()
-
-#
-# import pathlib
-# def get_datasets_filtered():
-#     # print([x for x in pathlib.Path(f'.').glob("*")])
-#     with pathlib.Path(f'dags/data/datasets_filtered.csv').open(encoding='utf-8') as f:
-#         reader = csv.DictReader(f)
-#         data = []
-#         for row in reader:
-#             for json_field in ["metrics", "organization", "tags"]:
-#                 if row[json_field]:
-#                     row[json_field] = json.loads(row[json_field])
-#             data.append(row)
-#         return data
 
 
 def fetch_all_push_mongo():
